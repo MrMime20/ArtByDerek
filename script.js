@@ -123,14 +123,23 @@ function buildSourceTexture() {
     sourceCtx = sourceCanvas.getContext('2d');
 
     const ratio = width / height;
+    const isMobile = width < 768 || ratio < 1.0;
 
     if (hasValidImg && img.naturalWidth > 0 && img.naturalHeight > 0) {
         const imgRatio = img.naturalWidth / img.naturalHeight;
         let dw, dh, ox, oy;
         if (imgRatio > ratio) {
-            dh = height; dw = height * imgRatio; ox = (width - dw) / 2; oy = 0;
+            dh = height;
+            dw = height * imgRatio;
+            // On mobile aspect ratios, anchor at ~1/4 distance to favor the left side character
+            const anchorX = isMobile ? 0.10 : 0.5;
+            ox = (width - dw) * anchorX;
+            oy = 0;
         } else {
-            dw = width; dh = width / imgRatio; ox = 0; oy = (height - dh) / 2;
+            dw = width;
+            dh = width / imgRatio;
+            ox = 0;
+            oy = (height - dh) / 2;
         }
         sourceCtx.fillStyle = '#050505';
         sourceCtx.fillRect(0, 0, width, height);
